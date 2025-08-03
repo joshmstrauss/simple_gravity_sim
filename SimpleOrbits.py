@@ -4,9 +4,11 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.patches as mpatches
+from matplotlib.widgets import Button
 
 G = 6.673e-11 # Newton's gravitational constant
 AU = 1.5e11
+pi = math.pi
 time_step = 600 * 60 # one hour per frame
 
 class Body:
@@ -43,11 +45,12 @@ class Body:
 
 # create bodies
 sun = Body("Sun", 1.989e30, 0, 0, 0, 0, 'yellow')
-mercury = Body("Mercury", 10e24, 0, 0.39*AU, -47360, 0, 'gray')
+mercury = Body("Mercury", 0.33e24, 0, 0.39*AU, -47360, 0, 'gray')
+venus = Body("Venus", 4.8673e24, 0.73 * AU * math.cos(1.25 * pi), 0.73 * AU * math.sin(1.25 * pi), 35020*math.cos(1.75*pi),35020*math.sin(1.75*pi), 'orange')
 earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue')
 # moon = Body("Moon", 7.35e22, 1.5e11 + 3.84e8, 0, 0, 2.978e4 + 1022, 'gray') # added moon, but it's too small to see at scale
 
-bodies = [sun, earth, mercury]
+bodies = [sun, mercury, venus, earth]
 
 # set up plot
 fig, ax = plt.subplots()
