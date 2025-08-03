@@ -5,11 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.patches as mpatches
 from matplotlib.widgets import Button
+from matplotlib.collections import LineCollection
 
 G = 6.673e-11 # Newton's gravitational constant
+
 AU = 1.5e11
 pi = math.pi
-time_step = 600 * 60 # one hour per frame
+time_step = 600 * 60 # ten hours per frame
 
 class Body:
     def __init__(self, name, mass, x, y, vx, vy, color):
@@ -20,6 +22,7 @@ class Body:
         self.vx = vx
         self.vy = vy
         self.color = color
+        self.trail = []
 
     def compute_gravitational_force(self, other):
         dx = other.x - self.x
@@ -55,12 +58,24 @@ bodies = [sun, mercury, venus, earth, mars]
 
 # set up plot
 fig, ax = plt.subplots()
-ax.set_xlim(-3e11, 3e11)
-ax.set_ylim(-3e11, 3e11)
+fig.patch.set_facecolor('black')    # sets figure background color
+ax.set_facecolor('black')           # sets plot (axes) background color
+ax.set_xlim(-4e11, 4e11)
+ax.set_ylim(-4e11, 4e11)
 scatter = ax.scatter([], [],)
 
+# set up orbital trails (2D line objects)
+trails = []
+for b in bodies: 
+    lc = LineCollection([], linewidths=1, colors=[b.color])
+    ax.add_collection(lc)
+    trails.append(lc)
+
 def init():
-    return scatter,
+    scatter.set_offsets([[0, 0]])
+    for trail in trails:
+        trail.set_segments([])
+    return [scatter] + trails
 
 def update(frame):
     forces = []
@@ -81,14 +96,31 @@ def update(frame):
         fx, fy = forces[i]
         body.update(fx, fy, time_step)
 
+        # store positions for trails
+        body.trail.append((body.x, body.y))
+        if len(body.trail) > 500:          # this sets trail length
+            body.trail.pop(0)
+        
+        # update trail line
+        xs_trail, ys_trail = zip(*body.trail)
+        #trails[i].set_data(xs_trail, ys_trail)
+        if len(body.trail) >= 2:
+            segments = [body.trail[j:j+2] for j in range(len(body.trail)-1)]
+            alphas = [(j + 1)/ len(segments) for j in range(len(segments))]
+            colors = [(body.color, alpha) for alpha in alphas]
+            trails[i].set_segments(segments)
+            trails[i].set_colors(colors)
+        else:
+            trails[i].set_segments([])
+
     # draw updated positions
     xs = [b.x for b in bodies]
     ys = [b.y for b in bodies]
     cs = [b.color for b in bodies]
     scatter.set_offsets(list(zip(xs, ys)))
-    scatter.set_color(cs)
+    scatter.set_facecolor(cs)
     scatter.set_sizes([100 if b.name == "Sun" else 10 for b in bodies])
-    return scatter,
+    return [scatter] + trails
 
 ani = animation.FuncAnimation(fig, update, init_func=init, frames=1000, interval=20, blit=True)
 legend_patches = []
@@ -97,7 +129,10 @@ for body in bodies:
     legend_patches.append(patch)
 
 ax.legend(handles=legend_patches, loc="upper right")
-
-plt.title("Simple Gravity Simulation")
+plt.title("Inner Solar System Simulation", color='white')
+ax.tick_params(colors='white')
+legend = ax.legend(handles=legend_patches, loc="upper right", facecolor='black')
+for text in legend.get_texts():
+    text.set_color("white")
 plt.show()
         
