@@ -6,6 +6,7 @@ import matplotlib.animation as animation
 import matplotlib.patches as mpatches
 
 G = 6.673e-11 # Newton's gravitational constant
+AU = 1.5e11
 time_step = 600 * 60 # one hour per frame
 
 class Body:
@@ -26,7 +27,7 @@ class Body:
         if distance == 0:
             return (0, 0)
 
-        force = G * self.mass * other.mass / distance**2
+        force = G * self.mass * other.mass / distance**2  # Newton's Law of Gravitation
         angle = math.atan2(dy, dx)
         fx = math.cos(angle) * force    # compute force vector components using trig
         fy = math.sin(angle) * force
@@ -42,8 +43,11 @@ class Body:
 
 # create bodies
 sun = Body("Sun", 1.989e30, 0, 0, 0, 0, 'yellow')
-earth = Body("Earth", 5.972e24, 1.5e11, 0, 0, 2.978e4, 'blue')
-bodies = [sun, earth]
+mercury = Body("Mercury", 10e24, 0, 0.39*AU, -47360, 0, 'gray')
+earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue')
+# moon = Body("Moon", 7.35e22, 1.5e11 + 3.84e8, 0, 0, 2.978e4 + 1022, 'gray') # added moon, but it's too small to see at scale
+
+bodies = [sun, earth, mercury]
 
 # set up plot
 fig, ax = plt.subplots()
