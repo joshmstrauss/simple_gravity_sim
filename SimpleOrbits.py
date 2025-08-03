@@ -48,14 +48,15 @@ sun = Body("Sun", 1.989e30, 0, 0, 0, 0, 'yellow')
 mercury = Body("Mercury", 0.33e24, 0, 0.39*AU, -47360, 0, 'gray')
 venus = Body("Venus", 4.8673e24, 0.73 * AU * math.cos(1.25 * pi), 0.73 * AU * math.sin(1.25 * pi), 35020*math.cos(1.75*pi),35020*math.sin(1.75*pi), 'orange')
 earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue')
+mars = Body("Mars", 0.64e24, 0, -1.5*AU, 24080, 0, "red")
 # moon = Body("Moon", 7.35e22, 1.5e11 + 3.84e8, 0, 0, 2.978e4 + 1022, 'gray') # added moon, but it's too small to see at scale
 
-bodies = [sun, mercury, venus, earth]
+bodies = [sun, mercury, venus, earth, mars]
 
 # set up plot
 fig, ax = plt.subplots()
-ax.set_xlim(-2e11, 2e11)
-ax.set_ylim(-2e11, 2e11)
+ax.set_xlim(-3e11, 3e11)
+ax.set_ylim(-3e11, 3e11)
 scatter = ax.scatter([], [],)
 
 def init():
