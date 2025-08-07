@@ -11,7 +11,7 @@ G = 6.673e-11 # Newton's gravitational constant
 
 AU = 1.5e11
 pi = math.pi
-time_step = 600 * 60 # ten hours per frame
+time_step = 1440 * 60 # 1440 * 60 = 24 hours per frame
 
 class Body:
     def __init__(self, name, mass, x, y, vx, vy, color):
@@ -52,16 +52,18 @@ mercury = Body("Mercury", 0.33e24, 0, 0.39*AU, -47360, 0, 'gray')
 venus = Body("Venus", 4.8673e24, 0.73 * AU * math.cos(1.25 * pi), 0.73 * AU * math.sin(1.25 * pi), 35020*math.cos(1.75*pi),35020*math.sin(1.75*pi), 'orange')
 earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue')
 mars = Body("Mars", 0.64e24, 0, -1.5*AU, 24080, 0, "red")
+jupiter = Body("Jupiter", 1.89813e26, 5.16*AU, 0, 0, 13060, 'brown')
+saturn = Body("Saturn", 5.68e26, -9.55*AU, 0, 0, -9670, 'orange')
 # moon = Body("Moon", 7.35e22, 1.5e11 + 3.84e8, 0, 0, 2.978e4 + 1022, 'gray') # added moon, but it's too small to see at scale
 
-bodies = [sun, mercury, venus, earth, mars]
+bodies = [sun, mercury, venus, earth, mars, jupiter, saturn]
 
 # set up plot
 fig, ax = plt.subplots()
 fig.patch.set_facecolor('black')    # sets figure background color
 ax.set_facecolor('black')           # sets plot (axes) background color
-ax.set_xlim(-4e11, 4e11)
-ax.set_ylim(-4e11, 4e11)
+ax.set_xlim(-1.5e12, 1.5e12)
+ax.set_ylim(-1.5e12, 1.5e12)
 scatter = ax.scatter([], [],)
 
 # set up orbital trails (2D line objects)
@@ -129,7 +131,7 @@ for body in bodies:
     legend_patches.append(patch)
 
 ax.legend(handles=legend_patches, loc="upper right")
-plt.title("Inner Solar System Simulation", color='white')
+plt.title("Solar System Simulation", color='white')
 ax.tick_params(colors='white')
 legend = ax.legend(handles=legend_patches, loc="upper right", facecolor='black')
 for text in legend.get_texts():
