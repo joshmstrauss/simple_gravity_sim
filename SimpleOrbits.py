@@ -14,7 +14,7 @@ pi = math.pi
 time_step = 1440 * 60 # 1440 * 60 = 24 hours per frame
 
 class Body:
-    def __init__(self, name, mass, x, y, vx, vy, color):
+    def __init__(self, name, mass, x, y, vx, vy, color, planet_type):
         self.name = name
         self.mass = mass
         self.x = x
@@ -23,6 +23,7 @@ class Body:
         self.vy = vy
         self.color = color
         self.trail = []
+        self.planet_type = planet_type
 
     def compute_gravitational_force(self, other):
         dx = other.x - self.x
@@ -47,13 +48,13 @@ class Body:
         self.y += self.vy * dt
 
 # create bodies
-sun = Body("Sun", 1.989e30, 0, 0, 0, 0, 'yellow')
-mercury = Body("Mercury", 0.33e24, 0, 0.39*AU, -47360, 0, 'gray')
-venus = Body("Venus", 4.8673e24, 0.73 * AU * math.cos(1.25 * pi), 0.73 * AU * math.sin(1.25 * pi), 35020*math.cos(1.75*pi),35020*math.sin(1.75*pi), 'orange')
-earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue')
-mars = Body("Mars", 0.64e24, 0, -1.5*AU, 24080, 0, "red")
-jupiter = Body("Jupiter", 1.89813e26, 5.16*AU, 0, 0, 13060, 'brown')
-saturn = Body("Saturn", 5.68e26, -9.55*AU, 0, 0, -9670, 'orange')
+sun = Body("Sun", 1.989e30, 0, 0, 0, 0, 'yellow', 'inner')
+mercury = Body("Mercury", 0.33e24, 0, 0.39*AU, -47360, 0, 'gray', 'inner')
+venus = Body("Venus", 4.8673e24, 0.73 * AU * math.cos(1.25 * pi), 0.73 * AU * math.sin(1.25 * pi), 35020*math.cos(1.75*pi),35020*math.sin(1.75*pi), 'orange', 'inner')
+earth = Body("Earth", 5.972e24, AU, 0, 0, 2.978e4, 'blue', 'inner')
+mars = Body("Mars", 0.64e24, 0, -1.5*AU, 24080, 0, "red", 'inner')
+jupiter = Body("Jupiter", 1.89813e26, 5.16*AU, 0, 0, 13060, 'brown', 'outer')
+saturn = Body("Saturn", 5.68e26, -9.55*AU, 0, 0, -9670, 'orange', 'outer')
 # moon = Body("Moon", 7.35e22, 1.5e11 + 3.84e8, 0, 0, 2.978e4 + 1022, 'gray') # added moon, but it's too small to see at scale
 
 bodies = [sun, mercury, venus, earth, mars, jupiter, saturn]
@@ -100,7 +101,11 @@ def update(frame):
 
         # store positions for trails
         body.trail.append((body.x, body.y))
-        if len(body.trail) > 500:          # this sets trail length
+        if body.planet_type == 'inner':
+            trail_length = 500
+        else:
+            trail_length = 1500
+        if len(body.trail) > trail_length:          # this sets trail length
             body.trail.pop(0)
         
         # update trail line
